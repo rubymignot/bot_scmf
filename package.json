@@ -1,0 +1,27 @@
+{
+  "name": "scmf",
+  "version": "0.1.0",
+  "description": "Bot pour SCMF",
+  "main": "dist/bot.js",
+  "author": "Ruby Mignot",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node dist/bot.js",
+    "build": "tsc",
+    "dev": "ts-node src/bot.ts"
+  },
+  "devDependencies": {
+    "prisma": "^5.6.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.6.0",
+    "@types/node": "^20.9.5",
+    "bufferutil": "^4.0.8",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.1",
+    "utf-8-validate": "^6.0.3"
+  }
+}
