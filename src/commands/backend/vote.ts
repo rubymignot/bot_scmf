@@ -3,10 +3,14 @@ import {
   ButtonBuilder,
   EmbedBuilder,
   ButtonStyle,
+  CacheType,
+  ChatInputCommandInteraction,
+  MessageContextMenuCommandInteraction,
+  UserContextMenuCommandInteraction,
 } from "discord.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-export async function vote(interaction: any) {
+export async function vote(interaction: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType> | UserContextMenuCommandInteraction<CacheType>) {
   const question = interaction.options.get("question");
   const options = [
     { name: "option1", value: interaction.options.get("option1") },
@@ -83,10 +87,10 @@ export async function vote(interaction: any) {
   );
   if (!votes) return;
   await voteInteractions.reply({
-    content: `Vous avez voté pour ${votes.value.value}`,
+    content: `Vous avez voté pour ${votes?.value?.value}`,
     ephemeral: true,
   });
-  description += `\n<@${interaction.member?.user.id}> a voté pour ${votes.value.value}`;
+  description += `\n<@${voteInteractions.member?.user.id}> a voté pour ${votes?.value?.value}`;
   embed.setDescription(description);
   await interaction.editReply({
     embeds: [embed],

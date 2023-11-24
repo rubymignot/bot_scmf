@@ -34,7 +34,7 @@ client.on("interactionCreate", async (interaction) => {
     let roles = (interaction?.member?.roles as GuildMemberRoleManager).cache;
     let isAuthorized = roles.some((role) => role.id === "1176048024846344284");
     if (isAuthorized) await vote(interaction);
-    else await interaction.reply("Vous n'avez pas la permission. :(\nDemandez à l'équipe des guides pour soumettre un vote.");
+    else await interaction.reply({content:"Vous n'avez pas la permission. :(\nDemandez à l'équipe des guides pour soumettre un vote.", ephemeral: true });
   }
 });
 
