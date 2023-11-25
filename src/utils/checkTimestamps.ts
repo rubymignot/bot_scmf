@@ -17,15 +17,20 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
 
     if (currentTime >= expirationTime && !poll.finished) {
       try {
-        const channelId = poll.ChannelId.replace(/<#|>/g, '');
+        const channelId = poll.ChannelId.replace(/<#|>/g, "");
         const channel = (await discordClient.channels.fetch(
-         channelId
+          channelId
         )) as TextChannel;
         if (channel) {
           try {
             console.log("Sending results for poll to channel ", channel.name);
             const message = await channel.messages.fetch(poll.MessageId);
             const results = compilePollResults(poll.PollVote);
+            // Update the poll message in Discord to remove the buttons and add the results
+            await message.edit({
+              embeds: message.embeds,
+              components: [],
+            });
             message.reply(
               `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
             );
