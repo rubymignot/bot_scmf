@@ -16,7 +16,7 @@ export async function handleCommands(interaction: Interaction) {
   const member = interaction.member as GuildMember;
 
   // Define the role IDs you want to check
-  const requiredRoleIds = ["ROLE_ID_1", "ROLE_ID_2"];
+  const requiredRoleIds = ["1176048024846344284"];
 
   // Check if the member has any of the required roles
   const hasRequiredRole = requiredRoleIds.some((roleId) =>
