@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node dist/bot.js",
+    "start": "node dist/src/bot.js",
     "build": "tsc",
     "dev": "ts-node src/bot.ts"
   },
