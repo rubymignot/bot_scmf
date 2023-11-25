@@ -37,6 +37,7 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
             try {
               await prisma.poll.delete({
                 where: { MessageId: poll.MessageId },
+                include: { PollVote: true },
               });
             } catch (error) {
               console.error("Error when updating vote in db.", error);
