@@ -17,8 +17,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: "/node_modules/"
-      - name: Restart Server
+      - name: Build & Restart Server
         uses: appleboy/ssh-action@v0.1.10
         with:
             host: ${{ secrets.REMOTE_HOST }}
