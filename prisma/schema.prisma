@@ -22,7 +22,6 @@ model Poll {
   description String
   duree     Int
   anonymous Boolean @default(false)
-  finished  Boolean @default(false)
   PollVote PollVote[]
 
   @@map("Vote")

@@ -15,7 +15,7 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
       poll.createdAt.getTime() + poll.duree * 3600000
     );
 
-    if (currentTime >= expirationTime && !poll.finished) {
+    if (currentTime >= expirationTime) {
       try {
         const channelId = poll.ChannelId.replace(/<#|>/g, "");
         const channel = (await discordClient.channels.fetch(
@@ -35,9 +35,8 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
               `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
             );
             try {
-              await prisma.poll.update({
+              await prisma.poll.delete({
                 where: { MessageId: poll.MessageId },
-                data: { finished: true },
               });
             } catch (error) {
               console.error("Error when updating vote in db.", error);
