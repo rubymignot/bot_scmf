@@ -13,6 +13,7 @@ import { handleCommands } from "./handlers/commands";
 import { handleVoteButton } from "./utils/voteButton";
 import prisma from "./prismaClient";
 import creervote from "../discord/creervote";
+import { checkTimestampsAndSendMessage } from "./utils/checkTimestamps";
 require("dotenv").config();
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -27,6 +28,9 @@ rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID!, process
 
 client.once("ready", () => {
   console.log("Ready!");
+  setInterval(() => {
+    checkTimestampsAndSendMessage(client);
+  }, 300000);
 });
 
 client.on("messageCreate", (message) => {

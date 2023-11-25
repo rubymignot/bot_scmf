@@ -13,7 +13,7 @@ const command = new SlashCommandBuilder()
 .addStringOption(option => option.setName("option4").setDescription("Options de vote").setRequired(false))
 .addStringOption(option => option.setName("option5").setDescription("Options de vote").setRequired(false))
 .addStringOption(option => option.setName("option6").setDescription("Options de vote").setRequired(false))
-
+.addBooleanOption(option => option.setName("anonyme").setDescription("Le vote est anonyme (True ou False)").setRequired(false))
 export default {
   data: command.toJSON(),
 };

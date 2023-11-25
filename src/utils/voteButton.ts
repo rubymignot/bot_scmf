@@ -46,8 +46,15 @@ export async function handleVoteButton(interaction: ButtonInteraction) {
       content: "Votre vote a été enregistré!",
       ephemeral: true,
     });
+    let newText = "";
+    if (poll?.anonymous === false) {
     // Update the poll description to add a note that the user has voted
-    const newText = `${poll?.description}\n<@${interaction.user.id}> a voté ${interaction.customId}.`;
+    newText = `${poll?.description}\n<@${interaction.user.id}> a voté ${interaction.customId}.`;
+    }
+    else {
+    // Update the poll description to add a note that the user has voted
+    newText = `${poll?.description}`;
+    }
     try {
     await prisma.poll.update({
       data: {

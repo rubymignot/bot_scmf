@@ -40,6 +40,7 @@ export default async function creervote(interaction: CommandInteraction) {
   const duree = interaction.options.get("duree");
   const description = "Cliquez sur les boutons pour voter.\nLe vote durera " + duree?.value + " heures.\n";
   const channelId = interaction.channel;
+  const anonymous = interaction.options.get("anonyme")?.value || false;
   const date = new Date().getTime();
   const embed = new EmbedBuilder()
     .setTitle(question?.value?.toString() || "Pas de question")
@@ -73,6 +74,7 @@ export default async function creervote(interaction: CommandInteraction) {
         question: question?.value?.toString() || "Erreur",
         duree: Number(duree?.value) || 0,
         AuthorId: interaction.user.globalName?.toString() || "Erreur",
+        anonymous: anonymous.toString().toLowerCase() === "true" ? true : false,
       },
     });
   } catch (error) {
