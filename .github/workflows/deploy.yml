@@ -20,14 +20,14 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc -i"
-          SOURCE: "./"
+          SOURCE: "dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
           EXCLUDE: "/dist/, /node_modules/"
           
-      - name: print out example job
+      - name: Restart Server
         uses: appleboy/ssh-action@v0.1.10
         with:
             host: ${{ secrets.REMOTE_HOST }}
@@ -36,4 +36,4 @@ jobs:
             port: ${{ secrets.REMOTE_PORT }}
             command_timeout: 30m
             script: | 
-                "pm2 restart all"
+                pm2 restart all
