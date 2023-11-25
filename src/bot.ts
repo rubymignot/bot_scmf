@@ -5,37 +5,28 @@ import {
   ButtonBuilder,
   EmbedBuilder,
   ButtonStyle,
-  GuildMemberRoleManager,
+  TextChannel,
+  REST,
+  Routes,
 } from "discord.js";
-import { vote } from "./commands/backend/vote";
+import { handleCommands } from "./handlers/commands";
+import { handleVoteButton } from "./utils/voteButton";
+import prisma from "./prismaClient";
+import creervote from "../discord/creervote";
 require("dotenv").config();
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
+const token = process.env.DISCORD_TOKEN;
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+const rest = new REST({ version: '9' }).setToken(token!);
+const commands = [creervote.data];
+rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID!, process.env.DISCORD_GUILD_ID!), { body: commands })
+  .then(() => console.log('Successfully registered application commands.'))
+  .catch(console.error);
+
 client.once("ready", () => {
   console.log("Ready!");
-});
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-
-  if (interaction.commandName === "ping") {
-    await interaction.reply("Pong!");
-  }
-
-  if (interaction.commandName === "server") {
-    await interaction.reply("Info du serveur.");
-  }
-
-  if (interaction.commandName === "vote") {
-    let roles = (interaction?.member?.roles as GuildMemberRoleManager).cache;
-    let isAuthorized = roles.some((role) => role.id === "1176048024846344284");
-    if (isAuthorized) await vote(interaction);
-    else await interaction.reply({content:"Vous n'avez pas la permission. :(\nDemandez à l'équipe des guides pour soumettre un vote.", ephemeral: true });
-  }
 });
 
 client.on("messageCreate", (message) => {
@@ -44,4 +35,20 @@ client.on("messageCreate", (message) => {
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.on('interactionCreate', handleCommands);
+client.on('interactionCreate', async (interaction) => {
+  if (interaction.isButton()) {
+    await handleVoteButton(interaction);
+
+    // Update the vote count in the message
+    const pollId = interaction.message.id;
+    const vote = await prisma.poll.findUnique({
+      where: { MessageId: pollId },
+      include: { PollVote: true }
+    });
+    const channel = interaction.channel as TextChannel;
+    const message = await channel.messages.fetch(pollId);
+  }
+});
+
+client.login(token);

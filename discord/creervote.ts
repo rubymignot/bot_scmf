@@ -3,7 +3,7 @@ import {
 } from "discord.js";
 
 const command = new SlashCommandBuilder()
-.setName("vote")
+.setName("creervote")
 .setDescription("Crée un vote")
 .addStringOption(option => option.setName("question").setDescription("La question a poser").setRequired(true))
 .addIntegerOption(option => option.setName("duree").setDescription("La duree du vote en heures").setRequired(true))
@@ -14,6 +14,6 @@ const command = new SlashCommandBuilder()
 .addStringOption(option => option.setName("option5").setDescription("Options de vote").setRequired(false))
 .addStringOption(option => option.setName("option6").setDescription("Options de vote").setRequired(false))
 
-module.exports = {
+export default {
   data: command.toJSON(),
 };
