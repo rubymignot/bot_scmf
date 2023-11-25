@@ -3,8 +3,6 @@ import prisma from "../prismaClient";
 
 export async function checkTimestampsAndSendMessage(discordClient: Client) {
   console.log("Checking timestamps...");
-  const oneDayAgo = new Date();
-  oneDayAgo.setHours(oneDayAgo.getHours() - 24);
 
   const polls = await prisma.poll.findMany({
     include: { PollVote: true },
@@ -13,31 +11,38 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
   const currentTime = new Date();
 
   for (const poll of polls) {
-    const expirationTime = new Date(poll.createdAt);
-    expirationTime.setHours(expirationTime.getHours() + poll.duree);
+    const expirationTime = new Date(
+      poll.createdAt.getTime() + poll.duree * 3600000
+    );
 
-    if (currentTime >= expirationTime) {
-      const channel = discordClient.channels.cache.get(
-        poll.ChannelId
-      ) as TextChannel;
-      if (channel) {
-        try {
-          const message = await channel.messages.fetch(poll.MessageId);
-          const results = compilePollResults(poll.PollVote);
-          message.reply(
-            `Le vote pour la question "${poll.question}" est terminé. \nRésultats : \n${results}`
-          );
+    if (currentTime >= expirationTime && !poll.finished) {
+      try {
+        const channelId = poll.ChannelId.replace(/<#|>/g, '');
+        const channel = (await discordClient.channels.fetch(
+         channelId
+        )) as TextChannel;
+        if (channel) {
           try {
-            await prisma.poll.update({
-              where: { MessageId: poll.MessageId },
-              data: { finished: true },
-            });
+            console.log("Sending results for poll to channel ", channel.name);
+            const message = await channel.messages.fetch(poll.MessageId);
+            const results = compilePollResults(poll.PollVote);
+            message.reply(
+              `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
+            );
+            try {
+              await prisma.poll.update({
+                where: { MessageId: poll.MessageId },
+                data: { finished: true },
+              });
+            } catch (error) {
+              console.error("Error when updating vote in db.", error);
+            }
           } catch (error) {
-            console.error("Error when updating vote in db.", error);
+            console.error("Error when crafting vote results msg:", error);
           }
-        } catch (error) {
-          console.error("Error when crafting vote results msg:", error);
         }
+      } catch (error) {
+        console.error("Error when fetching channel:", error);
       }
     }
   }
@@ -60,7 +65,7 @@ function compilePollResults(votes: any[]) {
   let resultsString = "";
   for (const option in voteCounts) {
     const count = voteCounts[option];
-    resultsString += `Option ${option}: ${count} vote(s)\n`;
+    resultsString += `Option "*${option}*": ${count} vote(s)\n`;
     // Vous pouvez ajouter ici le calcul des pourcentages si vous le souhaitez
   }
 
