@@ -39,8 +39,8 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
             // Update the poll description to add the results
             const description = poll.description
               .replace("Cliquez sur les boutons pour voter.\n", "")
-              .replace("Le vote durera " + poll.duree + " heures.\n\n", "");
-            const newDescription = `${description}\n\nLe vote a duré ${poll.duree} heures.\n\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
+              .replace("Le vote durera " + poll.duree + " heures.\n", "");
+            const newDescription = `${description}\nLe vote a duré ${poll.duree} heures.\n\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
 
             // Update the poll message in Discord
             const anonymous = poll.anonymous;
