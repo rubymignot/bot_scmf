@@ -26,14 +26,14 @@ export async function handleCommands(interaction: Interaction) {
   switch (commandName) {
     case "creervote":
       if (!hasRequiredRole) {
-        await interaction.reply(
-          "Vous n'avez pas la permission d'utiliser cette commande. Demandez à l'équipe des Guides."
-        );
+        await interaction.reply({
+          content:
+            "Vous n'avez pas la permission d'utiliser cette commande. Demandez à l'équipe des Guides.",
+          ephemeral: true,
+        });
         return;
       }
       await creervote(interaction);
       break;
-
-    // Add more cases for other commands as needed
   }
 }

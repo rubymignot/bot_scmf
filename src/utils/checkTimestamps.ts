@@ -8,7 +8,7 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
     `[${new Date()
       .toISOString()
       .replace(/T/, " ")
-      .replace(/\..+/, "")}] Checking timestamps.`
+      .replace(/\..+/, "")}] Checking vote timestamps.`
   );
 
   const polls = await prisma.poll.findMany({
