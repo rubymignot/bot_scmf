@@ -5,7 +5,10 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
   const currentTime = new Date();
 
   console.log(
-    `[${currentTime.toDateString()} - ${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}] Checking timestamps.`
+    `[${new Date()
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/\..+/, "")}] Checking timestamps.`
   );
 
   const polls = await prisma.poll.findMany({
@@ -43,7 +46,11 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
             const anonymous = poll.anonymous;
             const question = poll.question;
             const embed = new EmbedBuilder()
-            .setTitle(`${question?.toString()} - Vote ${anonymous ? "anonyme" : "public"}` || "Pas de question")
+              .setTitle(
+                `${question?.toString()} - Vote ${
+                  anonymous ? "anonyme" : "public"
+                }` || "Pas de question"
+              )
               .setDescription(newDescription)
               .setColor("#00ff00")
               .setTimestamp(poll?.createdAt)
