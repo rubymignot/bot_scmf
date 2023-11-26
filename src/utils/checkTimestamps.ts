@@ -35,9 +35,13 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
               `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
             );
             try {
+              // Delete the poll votes from the database
+              await prisma.pollVote.deleteMany({
+                where: { pollId: poll.MessageId },
+              });
+              // Delete the poll from the database
               await prisma.poll.delete({
                 where: { MessageId: poll.MessageId },
-                include: { PollVote: true },
               });
             } catch (error) {
               console.error("Error when updating vote in db.", error);
@@ -70,7 +74,7 @@ function compilePollResults(votes: any[]) {
   let resultsString = "";
   for (const option in voteCounts) {
     const count = voteCounts[option];
-    resultsString += `Option "*${option}*": ${count} vote(s)\n`;
+    resultsString += `Option "${option}": ${count} vote(s)\n`;
     // Vous pouvez ajouter ici le calcul des pourcentages si vous le souhaitez
   }
 
