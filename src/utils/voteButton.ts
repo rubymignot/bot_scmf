@@ -68,8 +68,10 @@ export async function handleVoteButton(interaction: ButtonInteraction) {
         });
       }
       // Update the poll message in Discord
+      const anonymous = poll?.anonymous;
+      const question = poll?.question;
       const embed = new EmbedBuilder()
-        .setTitle(poll?.question || "Pas de question")
+      .setTitle(`${question?.toString()} - Vote ${anonymous ? "anonyme" : "public"}` || "Pas de question")
         .setDescription(newText)
         .setColor("#00ff00")
         .setTimestamp(poll?.createdAt)

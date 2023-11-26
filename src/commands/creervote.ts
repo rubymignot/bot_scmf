@@ -49,7 +49,7 @@ export default async function creervote(interaction: CommandInteraction) {
   const anonymous = interaction.options.get("anonyme")?.value || false;
   const date = new Date().getTime();
   const embed = new EmbedBuilder()
-    .setTitle(question?.value?.toString() || "Pas de question")
+    .setTitle(`${question?.value?.toString()} - Vote ${anonymous ? "anonyme" : "public"}` || "Pas de question")
     .setDescription(description)
     .setColor("#00ff00")
     .setTimestamp(date)

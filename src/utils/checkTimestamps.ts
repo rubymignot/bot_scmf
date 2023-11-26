@@ -40,8 +40,10 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
             const newDescription = `${description}\n\nLe vote a duré ${poll.duree} heures.\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
 
             // Update the poll message in Discord
+            const anonymous = poll.anonymous;
+            const question = poll.question;
             const embed = new EmbedBuilder()
-              .setTitle(poll?.question || "Pas de question")
+            .setTitle(`${question?.toString()} - Vote ${anonymous ? "anonyme" : "public"}` || "Pas de question")
               .setDescription(newDescription)
               .setColor("#00ff00")
               .setTimestamp(poll?.createdAt)
