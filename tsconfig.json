@@ -6,7 +6,7 @@
       "strict": true,
       "esModuleInterop": true
     },
-    "include": ["src/**/*", "discord/creervote.ts"],
+    "include": ["src/**/*", "discord/creervote.ts", "bot.ts"],
     "exclude": ["node_modules"]
   }
   

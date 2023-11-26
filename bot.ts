@@ -1,19 +1,15 @@
 import {
   Client,
   GatewayIntentBits,
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-  ButtonStyle,
   TextChannel,
   REST,
   Routes,
 } from "discord.js";
-import { handleCommands } from "./handlers/commands";
-import { handleVoteButton } from "./utils/voteButton";
-import prisma from "./prismaClient";
-import creervote from "../discord/creervote";
-import { checkTimestampsAndSendMessage } from "./utils/checkTimestamps";
+import { handleCommands } from "./src/handlers/commands";
+import { handleVoteButton } from "./src/utils/voteButton";
+import prisma from "./src/prismaClient";
+import creervote from "./discord/creervote";
+import { checkTimestampsAndSendMessage } from "./src/utils/checkTimestamps";
 require("dotenv").config();
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],

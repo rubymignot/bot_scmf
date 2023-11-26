@@ -6,7 +6,6 @@ import {
   ButtonStyle,
 } from "discord.js";
 import prisma from "../prismaClient";
-import ShortUniqueId from "short-unique-id";
 
 export default async function creervote(interaction: CommandInteraction) {
   const options = [
@@ -38,6 +37,13 @@ export default async function creervote(interaction: CommandInteraction) {
   ];
   const question = interaction.options.get("question");
   const duree = interaction.options.get("duree");
+  if (duree?.value === 0) {
+    await interaction.reply({
+      content: "La durée du vote doit être supérieure à 0.",
+      ephemeral: true,
+    });
+    return;
+  }
   const description = "Cliquez sur les boutons pour voter.\nLe vote durera " + duree?.value + " heures.\n";
   const channelId = interaction.channel;
   const anonymous = interaction.options.get("anonyme")?.value || false;
@@ -84,8 +90,4 @@ export default async function creervote(interaction: CommandInteraction) {
       ephemeral: true,
     });
   }
-  await interaction.reply({
-    content: "Le vote a été créé.",
-    ephemeral: true,
-  });
 }

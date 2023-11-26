@@ -7,9 +7,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node dist/src/bot.js",
+    "start": "node dist/bot.js",
     "build": "tsc",
-    "dev": "ts-node src/bot.ts"
+    "dev": "ts-node bot.ts"
   },
   "devDependencies": {
     "prisma": "^5.6.0",
@@ -21,7 +21,6 @@
     "bufferutil": "^4.0.8",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
-    "short-unique-id": "^5.0.3",
     "ts-node": "^10.9.1",
     "utf-8-validate": "^6.0.3"
   }

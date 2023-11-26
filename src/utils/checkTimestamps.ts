@@ -2,13 +2,14 @@ import { Client, TextChannel } from "discord.js";
 import prisma from "../prismaClient";
 
 export async function checkTimestampsAndSendMessage(discordClient: Client) {
-  console.log("Checking timestamps...");
+
+  const currentTime = new Date();
+
+  console.log(`[${currentTime.toDateString()} - ${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}] Checking timestamps.`);
 
   const polls = await prisma.poll.findMany({
     include: { PollVote: true },
   });
-
-  const currentTime = new Date();
 
   for (const poll of polls) {
     const expirationTime = new Date(
@@ -23,17 +24,23 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
         )) as TextChannel;
         if (channel) {
           try {
-            console.log("Sending results for poll to channel ", channel.name);
+            console.log(`Poll "${poll.question}" ended. Sending results for poll to channel: ${channel.name}`);
             const message = await channel.messages.fetch(poll.MessageId);
             const results = compilePollResults(poll.PollVote);
+            const messageResults = await message.reply(
+              `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
+            );
+            // Update the poll description to add the results
+            const description = poll.description
+              .replace("Cliquez sur les boutons pour voter.\n", "")
+              .replace("Le vote durera " + poll.duree + " heures.\n\n", "");
+            const newDescription = `${description}\n\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
+            const embed = message.embeds[0];
             // Update the poll message in Discord to remove the buttons and add the results
             await message.edit({
               embeds: message.embeds,
               components: [],
             });
-            message.reply(
-              `Le vote pour la question "**${poll.question}**" est terminé. \n\nRésultats : \n${results}`
-            );
             try {
               // Delete the poll votes from the database
               await prisma.pollVote.deleteMany({
@@ -45,9 +52,16 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
               });
             } catch (error) {
               console.error("Error when updating vote in db.", error);
+              message.reply({
+                content:
+                  "Une erreur est survenue lors de la mise à jour du vote dans la base de données.",
+              });
             }
           } catch (error) {
             console.error("Error when crafting vote results msg:", error);
+            channel.send(
+              "Une erreur est survenue lors du calcul du message affichant le résultats du vote."
+            );
           }
         }
       } catch (error) {
@@ -55,7 +69,6 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
       }
     }
   }
-  console.log("Checked timestamps.");
 }
 
 function compilePollResults(votes: any[]) {
