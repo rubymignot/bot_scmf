@@ -46,13 +46,12 @@ export async function handleVoteButton(interaction: ButtonInteraction) {
     }
     // Send a confirmation message to the user
     await interaction.reply({
-      content: "Votre vote a été enregistré!",
+      content: "Votre vote a été enregistré ! Vous avez voté pour " + interaction.customId + ". Merci.",
       ephemeral: true,
     });
     if (!poll?.anonymous) {
-      let newText = "";
       // Update the poll description to add a note that the user has voted
-      newText = `${poll?.description}\n<@${interaction.user.id}> a voté ${interaction.customId}.`;
+      const newText = `${poll?.description}\n<@${interaction.user.id}> a voté ${interaction.customId}.`;
       try {
         await prisma.poll.update({
           data: {
@@ -67,18 +66,18 @@ export async function handleVoteButton(interaction: ButtonInteraction) {
             "Impossible de mettre à jour la description. Le vote a été enregistré.",
           ephemeral: true,
         });
-        // Update the poll message in Discord
-        const embed = new EmbedBuilder()
-          .setTitle(poll?.question || "Pas de question")
-          .setDescription(newText)
-          .setColor("#00ff00")
-          .setTimestamp(poll?.createdAt)
-          .setFooter({ text: `Vote créé par ${poll?.AuthorId}` });
-        await interaction.message.edit({
-          embeds: [embed],
-          components: interaction.message.components,
-        });
       }
+      // Update the poll message in Discord
+      const embed = new EmbedBuilder()
+        .setTitle(poll?.question || "Pas de question")
+        .setDescription(newText)
+        .setColor("#00ff00")
+        .setTimestamp(poll?.createdAt)
+        .setFooter({ text: `Vote créé par ${poll?.AuthorId}` });
+      await interaction.message.edit({
+        embeds: [embed],
+        components: interaction.message.components,
+      });
     }
   } catch (error) {
     console.error("Error handling vote button interaction:", error);
