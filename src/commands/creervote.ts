@@ -64,9 +64,13 @@ export default async function creervote(interaction: CommandInteraction) {
           .setStyle(ButtonStyle.Primary);
       })
   );
-  const reply = await interaction.reply({
+  const reply = await interaction.channel?.send({
     embeds: [embed],
     components: [row],
+  });
+  await interaction.reply({
+    content: "Votre vote a été créé !",
+    ephemeral: true,
   });
 
   // Step 1: Create the Poll record
