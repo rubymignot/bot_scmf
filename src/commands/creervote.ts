@@ -90,4 +90,5 @@ export default async function creervote(interaction: CommandInteraction) {
       ephemeral: true,
     });
   }
+  return;
 }
