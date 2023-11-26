@@ -1,11 +1,12 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, EmbedBuilder, TextChannel } from "discord.js";
 import prisma from "../prismaClient";
 
 export async function checkTimestampsAndSendMessage(discordClient: Client) {
-
   const currentTime = new Date();
 
-  console.log(`[${currentTime.toDateString()} - ${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}] Checking timestamps.`);
+  console.log(
+    `[${currentTime.toDateString()} - ${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}] Checking timestamps.`
+  );
 
   const polls = await prisma.poll.findMany({
     include: { PollVote: true },
@@ -24,7 +25,9 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
         )) as TextChannel;
         if (channel) {
           try {
-            console.log(`Poll "${poll.question}" ended. Sending results for poll to channel: ${channel.name}`);
+            console.log(
+              `Poll "${poll.question}" ended. Sending results for poll to channel: ${channel.name}`
+            );
             const message = await channel.messages.fetch(poll.MessageId);
             const results = compilePollResults(poll.PollVote);
             const messageResults = await message.reply(
@@ -34,11 +37,18 @@ export async function checkTimestampsAndSendMessage(discordClient: Client) {
             const description = poll.description
               .replace("Cliquez sur les boutons pour voter.\n", "")
               .replace("Le vote durera " + poll.duree + " heures.\n\n", "");
-            const newDescription = `${description}\n\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
-            const embed = message.embeds[0];
+            const newDescription = `${description}\n\nLe vote a duré ${poll.duree} heures.\nVoir les résultats ci-dessous. Merci d'avoir voté !\n${messageResults.url}`;
+
+            // Update the poll message in Discord
+            const embed = new EmbedBuilder()
+              .setTitle(poll?.question || "Pas de question")
+              .setDescription(newDescription)
+              .setColor("#00ff00")
+              .setTimestamp(poll?.createdAt)
+              .setFooter({ text: `Vote créé par ${poll?.AuthorId}` });
             // Update the poll message in Discord to remove the buttons and add the results
             await message.edit({
-              embeds: message.embeds,
+              embeds: [embed],
               components: [],
             });
             try {
