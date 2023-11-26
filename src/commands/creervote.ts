@@ -64,7 +64,7 @@ export default async function creervote(interaction: CommandInteraction) {
           .setStyle(ButtonStyle.Primary);
       })
   );
-  const reply = await interaction.channel?.send({
+  const reply = await interaction.reply({
     embeds: [embed],
     components: [row],
   });
