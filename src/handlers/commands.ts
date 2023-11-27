@@ -15,11 +15,12 @@ export async function handleCommands(interaction: Interaction) {
   // Get the member who initiated the interaction
   const member = interaction.member as GuildMember;
 
-  // Define the role IDs you want to check
-  const requiredRoleIds = ["1176048024846344284"];
-
+ 
+  const envRoleIds = process.env.DISCORD_ROLE_IDS || "";
+  const roleIds = envRoleIds?.split(",");
+  
   // Check if the member has any of the required roles
-  const hasRequiredRole = requiredRoleIds.some((roleId) =>
+  const hasRequiredRole = roleIds.some((roleId) =>
     member.roles.cache.has(roleId)
   );
 
